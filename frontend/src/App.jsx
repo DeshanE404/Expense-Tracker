@@ -1,20 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useState, useEffect } from 'react';
+import { Navigate, Routes, Route, useNavigate } from 'react-router-dom';
+import Layout from './components/Layout';
+import Dashboard from './pages/Dashboard';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const navigate = useNavigate();
+
+
+  const clearAuth = () => {
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
+    } catch (err) {
+      console.error('Error clearing auth data:', err);
+    }
+    setUser(null);
+    setToken(null);
+  };
+
+  const handleLogout = () => {
+    clearAuth();
+    navigate('/login');
+  };
 
   return (
-<div>
-  <h1 className="text-3xl font-bold underline">
-    Hello world!
-  </h1>
+    <Routes>
+      <Route element={<Layout user={user} onLogout={handleLogout} />}>
+        <Route path="/" element={<Dashboard />} />
+      </Route>
+    </Routes>
+  );
+}
 
-</div>
-
-   );
-};
-
-export default App
+export default App;

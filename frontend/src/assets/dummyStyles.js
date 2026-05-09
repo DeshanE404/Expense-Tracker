@@ -255,7 +255,6 @@ export const expensePageStyles = {
   chartExportButton: "flex items-center gap-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg transition-all text-sm hover:shadow-md",
   
   // Additional empty state style 
-  emptyStateSubtext: "text-sm text-gray-500 mt-2",
   
   // Timeframe positioning 
   timeframePositioning: "flex px-10 -mx-14 justify-center lg:-mx-0 md:-mx-0 lg:justify-end md:justify-end mt-4",
@@ -426,8 +425,9 @@ export const navbarStyles = {
   // User profile styles
   userContainer: "relative",
   userButton: "flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors",
+  userRelative: "relative",
   userAvatar: "w-9 h-9 flex items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-cyan-500 text-white font-bold text-lg",
-  statusIndicator: "absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white",
+  statusIndicator: "absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 bg-green-500 rounded-full border-2 border-white",
   userTextContainer: "text-left hidden md:block",
   userName: "text-sm font-medium text-gray-800 truncate max-w-[120px]",
   userEmail: "text-xs text-gray-500 truncate max-w-[120px]",
