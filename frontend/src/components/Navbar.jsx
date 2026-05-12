@@ -10,9 +10,15 @@ const BASE_URL = 'http://localhost:4000/api';
 
 const Navbar = ({ user: propUser, onLogout }) => {
     const navigate = useNavigate();
-    const user = propUser || { name: "", email: "" };
+    const [user, setUser] = useState(propUser || { name: "", email: "" });
     const menuRef = useRef();
     const [menuOpen, setMenuOpen] = useState(false);
+
+    useEffect(() => {
+        if (propUser) {
+            setUser(propUser);
+        }
+    }, [propUser]);
 
     const toggleMenu = () => setMenuOpen((prev) => !prev);
 
@@ -24,23 +30,23 @@ const Navbar = ({ user: propUser, onLogout }) => {
     };
 
 
-//fetch user data
-useEffect(() => {
-    const fetchUserData = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) return;
-            const response = await axios.get(`${BASE_URL}/user/me`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            }); 
-            const userData = response.data.user || response.data;
-            setUser(userData); // Adjust based on actual response structure
-        } catch (err) {console.error('Error fetching user data:', err)}
-    };
-    if (!propUser) {
-        fetchUserData();
-    }
-}, [propUser]);
+    //fetch user data
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) return;
+                const response = await axios.get(`${BASE_URL}/user/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const userData = response.data.user || response.data;
+                setUser(userData); // Adjust based on actual response structure
+            } catch (err) { console.error('Error fetching user data:', err) }
+        };
+        if (!propUser) {
+            fetchUserData();
+        }
+    }, [propUser]);
 
 
 
