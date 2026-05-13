@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/api/users", userRouter);
+app.use("/api/user", userRouter);
 app.get('/', (req, res) => {
     res.send('Api is working!');
 });
