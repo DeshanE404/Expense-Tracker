@@ -16,11 +16,11 @@ import {
 const MENU_ITEMS = [
   { text: "Dashboard", path: "/", icon: <Home size={20} /> },
   { text: "Income", path: "/income", icon: <ArrowUp size={20} /> },
-  { text: "Expenses", path: "/expense", icon: <ArrowDown size={20} /> },
+  { text: "Expenses", path: "/expenses", icon: <ArrowDown size={20} /> },
   { text: "Profile", path: "/profile", icon: <User size={20} /> },
 ];
 
-const Sidebar = ({ user, isCollapsed, setIsCollapsed }) => {
+const Sidebar = ({ user, isCollapsed, setIsCollapsed, onLogout }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const sidebarRef = useRef(null);
@@ -109,7 +109,7 @@ const Sidebar = ({ user, isCollapsed, setIsCollapsed }) => {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         <div className={sidebarStyles.sidebarInner.base}>
-          <div className={cn(sidebarStyles.userProfileContainer.base, 
+          <div className={cn(sidebarStyles.userProfileContainer.base,
             isCollapsed ? sidebarStyles.userProfileContainer.collapsed : sidebarStyles.userProfileContainer.expanded)}>
             <div className="flex items-center gap-3">
               <div className={sidebarStyles.userInitials.base}>
@@ -177,7 +177,7 @@ const Sidebar = ({ user, isCollapsed, setIsCollapsed }) => {
           </a>
 
           <button
-            onClick={handleLogout}
+            onClick={onLogout}
             className={cn(sidebarStyles.logoutButton.base,
               isCollapsed && sidebarStyles.logoutButton.collapsed
             )}
@@ -188,11 +188,11 @@ const Sidebar = ({ user, isCollapsed, setIsCollapsed }) => {
         </div>
       </motion.div>
 
-      <motion.button 
-        onClick={() => setMobileOpen((prev) => !prev)} 
+      <motion.button
+        onClick={() => setMobileOpen((prev) => !prev)}
         className={sidebarStyles.mobileMenuButton}
-        whileHover={{ scale: 1.05}}
-        whileTap={{ scale: 0.95}}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
       >
         {mobileOpen ? <X size={24} /> : <Menu size={20} />}
       </motion.button>
@@ -285,7 +285,7 @@ const Sidebar = ({ user, isCollapsed, setIsCollapsed }) => {
                 </a>
 
                 <button
-                  onClick={handleLogout}
+                  onClick={onLogout}
                   className={sidebarStyles.mobileLogoutButton}
                 >
                   <LogOut size={20} className="text-gray-400" />

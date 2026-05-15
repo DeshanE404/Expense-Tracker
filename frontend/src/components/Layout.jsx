@@ -4,6 +4,7 @@ import { styles } from '../assets/dummyStyles';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import { Outlet } from 'react-router-dom';
+import { getAuthHeader } from './Helpers';
 import {
   Activity,
   ArrowBigDown,
@@ -75,7 +76,9 @@ const safeArrayFromResponse = (res) => {
   if (Array.isArray(body)) return body;
   if (Array.isArray(body.data)) return body.data;
   if (Array.isArray(body.incomes)) return body.incomes;
+  if (Array.isArray(body.income)) return body.income;
   if (Array.isArray(body.expenses)) return body.expenses;
+  if (Array.isArray(body.expense)) return body.expense;
   return [];
 };
 
@@ -89,11 +92,10 @@ const Layout = ({ onLogout, user }) => {
 
   const { name: username = 'User' } = user || {};
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = React.useCallback(async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const headers = getAuthHeader();
 
       const [incomeRes, expenseRes] = await Promise.all([
         axios.get(`${API_BASE}/income/get`, { headers }),
@@ -132,12 +134,11 @@ const Layout = ({ onLogout, user }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const addTransaction = async (transaction) => {
+  const addTransaction = React.useCallback(async (transaction) => {
     try {
-      const token = localStorage.getItem('token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const headers = getAuthHeader();
       const endpoint =
         transaction.type === 'income' ? 'income/add' : 'expenses/add';
 
@@ -151,12 +152,11 @@ const Layout = ({ onLogout, user }) => {
       );
       throw err;
     }
-  };
+  }, [fetchTransactions]);
 
-  const editTransaction = async (id, transaction) => {
+  const editTransaction = React.useCallback(async (id, transaction) => {
     try {
-      const token = localStorage.getItem('token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const headers = getAuthHeader();
       const endpoint =
         transaction.type === 'income' ? 'income/update' : 'expenses/update';
 
@@ -173,12 +173,11 @@ const Layout = ({ onLogout, user }) => {
       );
       throw err;
     }
-  };
+  }, [fetchTransactions]);
 
-  const deleteTransaction = async (id, type) => {
+  const deleteTransaction = React.useCallback(async (id, type) => {
     try {
-      const token = localStorage.getItem('token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const headers = getAuthHeader();
       const endpoint = type === 'income' ? 'income/delete' : 'expenses/delete';
 
       await axios.delete(`${API_BASE}/${endpoint}/${id}`, { headers });
@@ -191,7 +190,7 @@ const Layout = ({ onLogout, user }) => {
       );
       throw err;
     }
-  };
+  }, [fetchTransactions]);
 
   useEffect(() => {
     fetchTransactions();
@@ -230,8 +229,8 @@ const Layout = ({ onLogout, user }) => {
     const savingsRate =
       last30DaysIncome > 0
         ? Math.round(
-            ((last30DaysIncome - last30DaysExpenses) / last30DaysIncome) * 100
-          )
+          ((last30DaysIncome - last30DaysExpenses) / last30DaysIncome) * 100
+        )
         : 0;
 
     const last60DaysAgo = new Date(now);
@@ -249,10 +248,10 @@ const Layout = ({ onLogout, user }) => {
     const expenseChange =
       previous30DaysExpenses > 0
         ? Math.round(
-            ((last30DaysExpenses - previous30DaysExpenses) /
-              previous30DaysExpenses) *
-              100
-          )
+          ((last30DaysExpenses - previous30DaysExpenses) /
+            previous30DaysExpenses) *
+          100
+        )
         : 0;
 
     return {
@@ -274,12 +273,12 @@ const Layout = ({ onLogout, user }) => {
       timeFrame === 'daily'
         ? 'Today'
         : timeFrame === 'weekly'
-        ? 'This Week'
-        : 'This Month',
+          ? 'This Week'
+          : 'This Month',
     [timeFrame]
   );
 
-  const outletContext = {
+  const outletContext = useMemo(() => ({
     transactions: filteredTransactions,
     addTransaction,
     editTransaction,
@@ -288,7 +287,7 @@ const Layout = ({ onLogout, user }) => {
     timeFrame,
     setTimeFrame,
     lastUpdated,
-  };
+  }), [filteredTransactions, timeFrame, addTransaction, editTransaction, deleteTransaction, fetchTransactions]);
 
   const getSavingsRating = (rate) =>
     rate > 30 ? 'Excellent' : rate > 20 ? 'Good' : 'Needs improvement';
@@ -324,6 +323,7 @@ const Layout = ({ onLogout, user }) => {
         user={user}
         isCollapsed={sidebarCollapsed}
         setIsCollapsed={setSidebarCollapsed}
+        onLogout={onLogout}
       />
 
       <div className={styles.layout.mainContainer(sidebarCollapsed)}>

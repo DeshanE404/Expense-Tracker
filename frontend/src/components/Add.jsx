@@ -1,4 +1,5 @@
 import React from 'react';
+import { X } from 'lucide-react';
 import { modalStyles } from '../assets/dummyStyles';
 
 const AddTransactionModal = ({
@@ -45,8 +46,7 @@ const AddTransactionModal = ({
                     <label className={modalStyles.label}>Description</label>              
                     <input type="text"
                      value={newTransaction.description}
-                     oncChange={(e) => setNewTransaction((prev)
-                    => ({
+                     onChange={(e) => setNewTransaction((prev) => ({
                         ...prev,
                         description: e.target.value,
                     }))
@@ -61,8 +61,7 @@ const AddTransactionModal = ({
                     <label className={modalStyles.label}>Amount</label>              
                     <input type="number"
                      value={newTransaction.amount}
-                     oncChange={(e) => setNewTransaction((prev)
-                    => ({
+                     onChange={(e) => setNewTransaction((prev) => ({
                         ...prev,
                         amount: e.target.value,
                     }))
@@ -120,8 +119,7 @@ const AddTransactionModal = ({
 
                 <label className={modalStyles.label}>Date</label>
                 <input type="date" value={newTransaction.date} onChange={(e) =>
-                    newTransaction
-                    ((prev) => ({
+                    setNewTransaction((prev) => ({
                         ...prev,
                         date: e.target.value,
                     }))
@@ -131,9 +129,9 @@ const AddTransactionModal = ({
                 />
                     </div>
 
-                    <buttton type="submit" className={modalStyles.submitButton(colorClass.button)}>
+                    <button type="submit" className={modalStyles.submitButton(colorClass.button)}>
                         {buttonText}
-                    </buttton>
+                    </button>
         </form>
     </div>
         </div>

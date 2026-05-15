@@ -3,37 +3,49 @@ import React from 'react'
 const Helpers = () => {
   return (
     <div>
-      
+
     </div>
   )
 }
+
+
+
+
 export const getTimeFrameRange = (timeFrame) => {
   const now = new Date();
   const start = new Date(now);
   start.setHours(0, 0, 0, 0);
 
   if (timeFrame === "daily") {
-    return { start, end: new Date(now), label: "Today" };
+    const end = new Date(now);
+    end.setHours(23, 59, 59, 999);
+    return { start, end, label: "Today" };
   }
 
   if (timeFrame === "weekly") {
     const startOfWeek = new Date(start);
     startOfWeek.setDate(start.getDate() - start.getDay());
     startOfWeek.setHours(0, 0, 0, 0);
-    return { start: startOfWeek, end: new Date(now), label: "This Week" };
+    const end = new Date(now);
+    end.setHours(23, 59, 59, 999);
+    return { start: startOfWeek, end, label: "This Week" };
   }
 
   if (timeFrame === "monthly") {
     const startOfMonth = new Date(start.getFullYear(), start.getMonth(), 1);
     startOfMonth.setHours(0, 0, 0, 0);
-    return { start: startOfMonth, end: new Date(now), label: "This Month" };
+    const end = new Date(now);
+    end.setHours(23, 59, 59, 999);
+    return { start: startOfMonth, end, label: "This Month" };
   }
 
   // yearly
   if (timeFrame === "yearly") {
     const startOfYear = new Date(start.getFullYear(), 0, 1);
     startOfYear.setHours(0, 0, 0, 0);
-    return { start: startOfYear, end: new Date(now), label: "This Year" };
+    const end = new Date(now);
+    end.setHours(23, 59, 59, 999);
+    return { start: startOfYear, end, label: "This Year" };
   }
 
   // default -> monthly
@@ -135,83 +147,72 @@ export const calculateData = (transactions) => {
   return { ...totals, savings: totals.income - totals.expenses };
 };
 
-export const generateChartPoints = (timeFrame) => {
+export const generateChartPoints = (timeFrame, timeFrameRange) => {
   const now = new Date();
   const points = [];
+
+  const baseDate = timeFrameRange?.start || now;
 
   if (timeFrame === "daily") {
     // Generate 24 hours for daily view
     for (let i = 0; i < 24; i++) {
-      const hour = new Date(now);
+      const hour = new Date(baseDate);
       hour.setHours(i, 0, 0, 0);
       points.push({
         date: hour,
         label: hour.toLocaleTimeString([], { hour: "2-digit" }),
         hour: i,
-        isCurrent: i === now.getHours(),
+        isCurrent:
+          i === now.getHours() && baseDate.toDateString() === now.toDateString(),
       });
     }
   } else if (timeFrame === "weekly") {
-    // Generate 7 days for weekly view (Sunday -> Saturday)
-    const start = new Date(now);
-    start.setDate(now.getDate() - now.getDay());
-    start.setHours(0, 0, 0, 0);
-
+    // Generate 7 days for weekly view
     for (let i = 0; i < 7; i++) {
-      const day = new Date(start);
-      day.setDate(start.getDate() + i);
+      const day = new Date(baseDate);
+      day.setDate(baseDate.getDate() + i);
       points.push({
         date: day,
-        label: day.toLocaleDateString("en-US", { weekday: "short" }),
-        isCurrent:
-          day.getDate() === now.getDate() && day.getMonth() === now.getMonth(),
+        label: day.toLocaleDateString([], { weekday: "short" }),
+        isCurrent: day.toDateString() === now.toDateString(),
       });
     }
   } else if (timeFrame === "monthly") {
-    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    // Generate days of the month
     const daysInMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
+      baseDate.getFullYear(),
+      baseDate.getMonth() + 1,
       0
     ).getDate();
-
     for (let i = 1; i <= daysInMonth; i++) {
-      const day = new Date(now.getFullYear(), now.getMonth(), i);
+      const day = new Date(baseDate.getFullYear(), baseDate.getMonth(), i);
       points.push({
         date: day,
-        label: day.toLocaleDateString("en-US", { day: "numeric" }),
-        isCurrent: i === now.getDate(),
+        label: i.toString(),
+        isCurrent: day.toDateString() === now.toDateString(),
       });
     }
   } else if (timeFrame === "yearly") {
+    // Generate 12 months for yearly view
     for (let i = 0; i < 12; i++) {
-      const month = new Date(now.getFullYear(), i, 1);
+      const month = new Date(baseDate.getFullYear(), i, 1);
       points.push({
         date: month,
-        label: month.toLocaleDateString("en-US", { month: "short" }),
-        isCurrent: i === now.getMonth(),
-      });
-    }
-  } else {
-    // fallback -> monthly
-    const start = new Date(now.getFullYear(), now.getMonth(), 1);
-    const daysInMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0
-    ).getDate();
-
-    for (let i = 1; i <= daysInMonth; i++) {
-      const day = new Date(now.getFullYear(), now.getMonth(), i);
-      points.push({
-        date: day,
-        label: day.toLocaleDateString("en-US", { day: "numeric" }),
-        isCurrent: i === now.getDate(),
+        label: month.toLocaleDateString([], { month: "short" }),
+        isCurrent:
+          month.getMonth() === now.getMonth() &&
+          month.getFullYear() === now.getFullYear(),
       });
     }
   }
 
   return points;
+};
+
+export const getAuthHeader = () => {
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
 export default Helpers;

@@ -37,7 +37,7 @@ export const dashboardStyles = {
   pieChartHeader: "flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3",
   pieChartTitle: "text-xl lg:pt-3 xl:pl-3 font-bold text-gray-800 mb-5 flex items-center gap-3",
   pieChartSubtitle: "text-sm lg:text-center xl:text-start xl:pl-3 text-gray-500 mb-3",
-  pieChartHeight: "h-90 xl:h-80",
+  pieChartHeight: "h-[350px] xl:h-[400px]",
 
   // Pie chart tooltip styles
   tooltipContent: {
@@ -112,7 +112,7 @@ export const trendStyles = {
 
 // Chart specific styles
 export const chartStyles = {
-  pieChart: "lg:-px-5 lg:text-xs xl:text-xl",
+  pieChart: "lg:-mx-5 lg:text-xs xl:text-xl",
 };
 
 // Add to existing dummyStyles.js

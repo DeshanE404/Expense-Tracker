@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Navigate,
   Routes,
@@ -11,6 +11,9 @@ import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import Income from "./pages/Income";
+import Expenses from "./pages/Expenses";
+import Profile from "./pages/Profile";
 
 const API_URL = "http://localhost:4000/api";
 
@@ -40,6 +43,7 @@ const ProtectedRoute = ({ user, children }) => {
   const sessionToken = sessionStorage.getItem("token");
   const hasToken = localToken || sessionToken;
 
+  // Sync check: we only consider a user "logged in" if we have both user object and token
   if (!user || !hasToken) {
     return <Navigate to="/login" replace />;
   }
@@ -63,7 +67,7 @@ function App() {
   const navigate = useNavigate();
 
   // to save the auth in the storage
-  const persistAuth = (userObj, tokenStr, remember = false) => {
+  const persistAuth = React.useCallback((userObj, tokenStr, remember = false) => {
     try {
       const storage = remember ? localStorage : sessionStorage;
       const otherStorage = remember ? sessionStorage : localStorage;
@@ -74,12 +78,15 @@ function App() {
       otherStorage.removeItem("user");
       otherStorage.removeItem("token");
 
-      setUser(userObj || null);
+      setUser((prev) => {
+        if (JSON.stringify(prev) === JSON.stringify(userObj)) return prev;
+        return userObj || null;
+      });
       setToken(tokenStr || null);
     } catch (err) {
       console.error("persistAuth error:", err);
     }
-  };
+  }, []);
 
   const clearAuth = () => {
     try {
@@ -101,13 +108,18 @@ function App() {
       try {
         const storedToken =
           localStorage.getItem("token") || sessionStorage.getItem("token");
+        const storedUser =
+          localStorage.getItem("user") || sessionStorage.getItem("user");
 
-        if (storedToken) {
+        // If we have one but not the other, clear everything to avoid loop
+        if ((storedToken && !storedUser) || (!storedToken && storedUser)) {
+          clearAuth();
+        } else if (storedToken) {
           try {
             const res = await axios.get(`${API_URL}/user/me`, {
               headers: { Authorization: `Bearer ${storedToken}` },
             });
-            const profile = res.data;
+            const profile = res.data.user || res.data;
             const isLocal = !!localStorage.getItem("token");
             persistAuth(profile, storedToken, isLocal);
           } catch (err) {
@@ -123,7 +135,7 @@ function App() {
     };
 
     bootstrap();
-  }, []);
+  }, [persistAuth]);
 
   // save transactions to storage whenever they change
   useEffect(() => {
@@ -147,6 +159,11 @@ function App() {
   const handleLogout = () => {
     clearAuth();
     navigate("/login");
+  };
+
+  const updateUserData = (newUserData) => {
+    const isLocal = !!localStorage.getItem("token");
+    persistAuth(newUserData, token, isLocal);
   };
 
   const addTransaction = (newTransaction) =>
@@ -177,12 +194,22 @@ function App() {
       <Routes>
         <Route
           path="/login"
-          element={user ? <Navigate to="/" /> : <Login onLogin={handleLogin} />}
+          element={
+            user && (localStorage.getItem("token") || sessionStorage.getItem("token")) ? (
+              <Navigate to="/" />
+            ) : (
+              <Login onLogin={handleLogin} />
+            )
+          }
         />
         <Route
           path="/signup"
           element={
-            user ? <Navigate to="/" /> : <Signup onSignup={handleSignup} />
+            user && (localStorage.getItem("token") || sessionStorage.getItem("token")) ? (
+              <Navigate to="/" />
+            ) : (
+              <Signup onSignup={handleSignup} />
+            )
           }
         />
 
@@ -205,10 +232,27 @@ function App() {
             path="/"
             element={<Dashboard />}
           />
+          <Route path="/income" element={
+            <Income transactions={transactions}
+              addTransaction={addTransaction}
+              editTransaction={editTransaction}
+              deleteTransaction={deleteTransaction}
+              refreshTransactions={refreshTransactions} />
+          }
+          />
+          <Route path="/expenses" element={
+            <Expenses transactions={transactions}
+              addTransaction={addTransaction}
+              editTransaction={editTransaction}
+              deleteTransaction={deleteTransaction}
+              refreshTransactions={refreshTransactions} />
+          }
+          />
+          <Route path="/profile" element={<Profile user={user} onUpdateProfile={updateUserData} onLogout={handleLogout} />} />
         </Route>
 
         {/* Fallback for unauthenticated users */}
-        <Route path="*" element={<Navigate to={user ? "/" : "/login"} />} />
+        <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
       </Routes>
     </>
   );
