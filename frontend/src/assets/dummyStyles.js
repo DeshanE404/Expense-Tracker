@@ -411,7 +411,7 @@ export const loginStyles = {
 export const navbarStyles = {
   // Layout and container styles
   header: "sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm",
-  container: "flex items-center justify-between px-4 py-3 md:px-8 max-w-7xl mx-auto",
+  container: "flex items-center justify-between px-6 py-3 md:px-12 max-w-full",
 
   // Logo styles
   logoContainer: "flex items-center gap-0 cursor-pointer",

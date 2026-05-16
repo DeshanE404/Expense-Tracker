@@ -99,9 +99,7 @@ const Navbar = ({ user: propUser, onLogout }) => {
                                     <button onClick={() => { navigate('/profile'); setMenuOpen(false); }} className={navbarStyles.menuItem}>
                                         <User size={18} /> Profile
                                     </button>
-                                    <button onClick={() => { navigate('/settings'); setMenuOpen(false); }} className={navbarStyles.menuItem}>
-                                        <Settings size={18} /> Settings
-                                    </button>
+
                                 </div>
                                 <div className={navbarStyles.menuItemBorder}>
                                     <button onClick={handleLogout} className={navbarStyles.logoutButton}>

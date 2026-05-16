@@ -50,10 +50,7 @@ const Sidebar = ({ user, isCollapsed, setIsCollapsed, onLogout }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileOpen]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+
 
   const toggleSidebar = () => {
     setIsCollapsed((c) => !c);
@@ -109,8 +106,11 @@ const Sidebar = ({ user, isCollapsed, setIsCollapsed, onLogout }) => {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         <div className={sidebarStyles.sidebarInner.base}>
-          <div className={cn(sidebarStyles.userProfileContainer.base,
-            isCollapsed ? sidebarStyles.userProfileContainer.collapsed : sidebarStyles.userProfileContainer.expanded)}>
+          <Link
+            to="/profile"
+            className={cn(sidebarStyles.userProfileContainer.base,
+              isCollapsed ? sidebarStyles.userProfileContainer.collapsed : sidebarStyles.userProfileContainer.expanded)}
+          >
             <div className="flex items-center gap-3">
               <div className={sidebarStyles.userInitials.base}>
                 {initial}
@@ -126,7 +126,7 @@ const Sidebar = ({ user, isCollapsed, setIsCollapsed, onLogout }) => {
                 </motion.div>
               )}
             </div>
-          </div>
+          </Link>
 
           <button
             onClick={toggleSidebar}
@@ -219,15 +219,19 @@ const Sidebar = ({ user, isCollapsed, setIsCollapsed, onLogout }) => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className={sidebarStyles.mobileHeader}>
-                <div className="flex items-center gap-2">
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2"
+                >
                   <div className={sidebarStyles.userInitials.base}>
                     {initial}
                   </div>
-                  <div className="hidden sm:block">
+                  <div className="hidden sm:block text-left">
                     <p className="font-semibold text-gray-800">{username}</p>
                     <p className="text-xs text-gray-500">{email}</p>
                   </div>
-                </div>
+                </Link>
                 <button
                   onClick={() => setMobileOpen(false)}
                   className={sidebarStyles.mobileCloseButton}

@@ -213,6 +213,7 @@ function App() {
           }
         />
 
+        {/* Pathless Layout Route: Always matches, providing the Layout to all children */}
         <Route
           element={
             <ProtectedRoute user={user}>
@@ -228,27 +229,45 @@ function App() {
             </ProtectedRoute>
           }
         >
+          {/* Use absolute paths for all child routes */}
+          <Route path="/" element={<Dashboard />} />
+
           <Route
-            path="/"
-            element={<Dashboard />}
+            path="/income"
+            element={
+              <Income
+                transactions={transactions}
+                addTransaction={addTransaction}
+                editTransaction={editTransaction}
+                deleteTransaction={deleteTransaction}
+                refreshTransactions={refreshTransactions}
+              />
+            }
           />
-          <Route path="/income" element={
-            <Income transactions={transactions}
-              addTransaction={addTransaction}
-              editTransaction={editTransaction}
-              deleteTransaction={deleteTransaction}
-              refreshTransactions={refreshTransactions} />
-          }
+
+          <Route
+            path="/expenses"
+            element={
+              <Expenses
+                transactions={transactions}
+                addTransaction={addTransaction}
+                editTransaction={editTransaction}
+                deleteTransaction={deleteTransaction}
+                refreshTransactions={refreshTransactions}
+              />
+            }
           />
-          <Route path="/expenses" element={
-            <Expenses transactions={transactions}
-              addTransaction={addTransaction}
-              editTransaction={editTransaction}
-              deleteTransaction={deleteTransaction}
-              refreshTransactions={refreshTransactions} />
-          }
+
+          <Route
+            path="/profile"
+            element={
+              <Profile
+                user={user}
+                onUpdateProfile={updateUserData}
+                onLogout={handleLogout}
+              />
+            }
           />
-          <Route path="/profile" element={<Profile user={user} onUpdateProfile={updateUserData} onLogout={handleLogout} />} />
         </Route>
 
         {/* Fallback for unauthenticated users */}
