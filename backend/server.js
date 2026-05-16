@@ -6,7 +6,6 @@ import userRouter from './routes/userRoute.js';
 import incomeRouter from './routes/incomeRoute.js';
 import expenseRouter from './routes/expenseRoute.js';
 import dashboardRouter from './routes/dashboardRoute.js';
-// nodemon reload trigger
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -27,17 +26,15 @@ app.use("/api/income", incomeRouter);
 app.use("/api/expenses", expenseRouter);
 app.use("/api/dashboard", dashboardRouter);
 
-// Connect DB and start server
-const startServer = async () => {
-    try {
-        await connectDB();
-        app.listen(PORT, () => {
-            console.log(`✓ Server is running on http://localhost:${PORT}`);
-        });
-    } catch (error) {
-        console.error("Failed to start server:", error);
-        process.exit(1);
-    }
-};
+// Connect DB
+connectDB();
 
-startServer();
+// Export for Vercel
+export default app;
+
+// Local development server logic
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`✓ Local server running on http://localhost:${PORT}`);
+    });
+}
