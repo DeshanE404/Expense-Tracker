@@ -15,7 +15,7 @@ import Income from "./pages/Income";
 import Expenses from "./pages/Expenses";
 import Profile from "./pages/Profile";
 
-const API_URL = "http://localhost:4000/api";
+import { API_URL } from "./config";
 
 // get transaction from storage
 const getTransactionsFromStorage = () => {

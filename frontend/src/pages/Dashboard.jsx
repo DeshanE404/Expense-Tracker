@@ -37,7 +37,7 @@ import GaugeCard from "../components/GaugeCard";
 import FinancialCard from "../components/FinancialCard";
 import AddTransactionModal from "../components/Add";
 
-const API_BASE = "http://localhost:4000/api";
+import { API_URL as API_BASE } from '../config';
 
 //To convert date to ISO
 

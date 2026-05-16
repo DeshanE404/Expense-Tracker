@@ -26,7 +26,7 @@ import {
   Zap,
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:4000/api';
+import { API_URL as API_BASE } from '../config';
 
 const CATEGORY_ICONS = {
   Food: <Utensils className="w-4 h-4" />,

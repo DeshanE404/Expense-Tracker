@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'
 
 
-const JWT_SECRET = 'your_jwt_secret_key'; // In production, use environment variables to store secrets
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; // In production, use environment variables to store secrets
 const JWT_EXPIRES_IN = '6h'; // Token expiration time
 
 const createToken = (user) => {
