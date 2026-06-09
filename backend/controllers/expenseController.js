@@ -111,25 +111,20 @@ export async function downloadExpenseData(req, res) {
 
 export async function getExpenseOverview(req, res) {
     const userId = req.user._id;
-    const { startDate, endDate } = req.query;
-    const { start, end } = getDateRange(startDate, endDate);
+    const { range = "monthly" } = req.query;
+    const { start, end } = getDateRange(range);
     try {
-        const userId = req.user._id;
-        const { range = "monthly" } = req.query;
-        const { start, end } = getDateRange(range);
         const expenses = await expenseModel.find({
             userId,
             date: { $gte: start, $lte: end },
         }).sort({ date: -1 });
-        
 
-
-    const totalExpense = expense.reduce((acc, cur) => acc + cur.amount, 0);
+    const totalExpense = expenses.reduce((acc, cur) => acc + cur.amount, 0);
     const averageExpense =
-      expense.length > 0 ? totalExpense / expense.length : 0;
-    const numberOfTransactions = expense.length;
+      expenses.length > 0 ? totalExpense / expenses.length : 0;
+    const numberOfTransactions = expenses.length;
 
-    const recentTransactions = expense.slice(0, 7);
+    const recentTransactions = expenses.slice(0, 7);
 
 res.json({
     success: true,

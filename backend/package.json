@@ -1,13 +1,14 @@
 {
-  "name": "backend",
+  "name": "expense-tracker-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend API for Expense Tracker - A full-stack expense management application",
   "license": "ISC",
   "author": "",
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -17,8 +18,10 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.1",
-    "nodemon": "^3.1.14",
     "validator": "^13.15.35",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
